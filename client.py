@@ -22,4 +22,5 @@ def make_task(implant_id, cmd, args ):
         return data.get("msg")
 
 if __name__ == "__main__":
-    make_task("blah", "fight", "me")
+    id = "a81a2fde6c750618b037b4b85685eef8"
+    make_task(id, "cmd", "whoami")

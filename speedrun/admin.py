@@ -55,10 +55,10 @@ def list_implant():
 def create_task():
     # todo: add logic to ensure that the implant even exists!
     data = request.get_json() 
-    implant_id = data.get("implant_id")
-    cmd = data.get("cmd")
-    args = data.get("args")
-    task_id = create_task_helper(implant_id, cmd, args)
+    #implant_id = data.get("implant_id")
+    #cmd = data.get("cmd")
+    #args = data.get("args")
+    task_id = create_task_helper(**data)
     if task_id == "":
         return jsonify({"status": False, "msg": "failed to create task. one or more required arguments are empty"})
     return jsonify({"status": True, "msg":task_id })
@@ -66,7 +66,8 @@ def create_task():
 @admin.route("/task/list", methods= ["GET"])
 def task_list():
     # todo: use dataclase
-    t = [{"implant_id": i.implant_id, "task_id": i.task_id, "status": i.status, "cmd": i.cmd,"args": i.args} for i in list_tasks()]
+    #t = [{"implant_id": i.implant_id, "task_id": i.task_id, "status": i.status, "cmd": i.cmd,"args": i.args} for i in list_tasks()]
+    t = [i.toJSON() for i in list_tasks()]
     return jsonify(t)
 
 
@@ -74,6 +75,7 @@ def task_list():
 def implant_list():
     # todo: use dataclase
     # todo add rest of the fields 
-    t =  [{"implant_id": i.implant_id, "os_name": i.os_name} for i in list_implant()]
+    #t =  [{"implant_id": i.implant_id, "os_name": i.os_name} for i in list_implant()]
+    t = [ i.toJSON() for i in list_implant()]
     return jsonify(t)
 

