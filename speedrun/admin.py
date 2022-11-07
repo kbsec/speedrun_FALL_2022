@@ -1,6 +1,6 @@
 from flask import Blueprint, request ,jsonify
 from speedrun.db import db
-from speedrun.models import Task, random_id, Implant
+from speedrun.models import Task, random_id, Implant, CREATED
 admin = Blueprint('admin', __name__)
 
 
@@ -13,10 +13,7 @@ def hello_admin():
 # todo: don't let eveyrone have access to my admin itnerface 
 
 # constatns for task
-CREATED = "CREATED"
-TASKED = "TASKED"
-COMPLETE = "COMPLETE"
-ERROR = "ERROR"
+
 
 """"
 class Task(db.Model):

